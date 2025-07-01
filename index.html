@@ -76,7 +76,7 @@
       onEachFeature: (f,layer) => {
         const st = stateLinks[f.properties.postal];
         const popup = st
-          ? `<strong>${st.name}</strong><br><a href="${st.url}" target="_blank">Certification Info</a>`
+          ? `<strong>${st.name}</strong><br><a href="${st.url}" target="_blank" rel="noopener noreferrer">Certification Info</a>`
           : `<strong>${f.properties.name}</strong><br>No info available`;
         layer.bindPopup(popup);
         layer.setStyle({
