@@ -6,9 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    body { margin: 0; }
-    #map { width: 100%; height: 95vh; }
-    .popup-link {
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    #map {
+      width: 100%;
+      height: 80vh;
+    }
+    #info-box {
+      padding: 20px;
+      text-align: center;
+      background-color: #f9f9f9;
+      border-top: 1px solid #ccc;
+    }
+    #info-box h3 {
+      margin-bottom: 10px;
+    }
+    .info-link {
       display: inline-block;
       margin-top: 8px;
       padding: 6px 12px;
@@ -18,14 +33,17 @@
       border-radius: 4px;
       font-weight: bold;
     }
-    .popup-link:hover {
+    .info-link:hover {
       background-color: #0d5ec9;
     }
   </style>
 </head>
 <body>
-  <h2 style="text-align:center;">Click any state to open CS Teacher Certification Info</h2>
+  <h2 style="text-align:center;">Click any state to view CS Teacher Certification Info</h2>
   <div id="map"></div>
+  <div id="info-box">
+    <p>Click a state on the map to view its Computer Science teacher certification details.</p>
+  </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-usa-states/dist/leaflet.usaStates.min.js"></script>
@@ -100,24 +118,26 @@
             fillColor: colors[st.name.charCodeAt(0) % colors.length],
             fillOpacity: 0.7
           });
-          layer.on('click', (e) => {
-            console.log(`Clicked ${st.name}: opening ${st.url}`);
-            const newWin = window.open(st.url, '_blank', 'noopener');
-            if (newWin) newWin.focus();
-            else alert('Pop-up blocked! Please allow pop-ups for this site.');
+          layer.on('click', () => {
+            const infoBox = document.getElementById('info-box');
+            infoBox.innerHTML = `
+              <h3>${st.name} - CS Teacher Certification Info</h3>
+              <p>To learn about Computer Science teacher certification requirements and procedures in ${st.name}, click the link below:</p>
+              <a class="info-link" href="${st.url}" target="_blank" rel="noopener noreferrer">View Certification Info</a>
+            `;
           });
         } else {
           layer.setStyle({
             fillColor: '#EEE',
             fillOpacity: 0.5
           });
-          // Fallback popup with clickable button
-          layer.bindPopup(`
-            <strong>${feature.properties.name}</strong><br>
-            <a href="#" class="popup-link" onclick="alert('No certification info available for this state.'); return false;">
-              No certification info
-            </a>
-          `);
+          layer.on('click', () => {
+            const infoBox = document.getElementById('info-box');
+            infoBox.innerHTML = `
+              <h3>${feature.properties.name}</h3>
+              <p>No CS certification information available for this state.</p>
+            `;
+          });
         }
       }
     }).addTo(map);
