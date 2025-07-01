@@ -6,25 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    #map {
-      width: 100%;
-      height: 80vh;
-    }
+    body { margin: 0; font-family: Arial, sans-serif; }
+    #map { width: 100%; height: 80vh; }
     #info-box {
       padding: 20px;
       text-align: center;
-      background-color: #f9f9f9;
+      background: #f9f9f9;
       border-top: 1px solid #ccc;
     }
-    #info-box h3 {
-      margin-bottom: 10px;
-    }
     .info-link {
-      display: inline-block;
       margin-top: 8px;
       padding: 6px 12px;
       background-color: #1E90FF;
@@ -33,114 +23,70 @@
       border-radius: 4px;
       font-weight: bold;
     }
-    .info-link:hover {
-      background-color: #0d5ec9;
-    }
+    .info-link:hover { background-color: #0d5ec9; }
   </style>
 </head>
 <body>
   <h2 style="text-align:center;">Click any state to view CS Teacher Certification Info</h2>
   <div id="map"></div>
   <div id="info-box">
-    <p>Click a state on the map to view its Computer Science teacher certification details.</p>
+    <p>Click a state on the map to view its Computer Science teacher certification details.</p>
   </div>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-usa-states/dist/leaflet.usaStates.min.js"></script>
   <script>
-    const stateLinks = {
-      AL: { name: "Alabama", url: "https://www.alabamaachieves.org/teacher-center/teacher-certification/computer-science/" },
-      AK: { name: "Alaska", url: "https://education.alaska.gov/Teach" },
-      AZ: { name: "Arizona", url: "https://www.azed.gov/educator-certification/computer-science-grades-6-12" },
-      AR: { name: "Arkansas", url: "https://dese.ade.arkansas.gov/educator-certification/computer-science" },
-      CA: { name: "California", url: "https://www.cde.ca.gov/ci/pl/computerscience.asp" },
-      CO: { name: "Colorado", url: "https://www.cde.state.co.us/computerscience" },
-      CT: { name: "Connecticut", url: "https://portal.ct.gov/-/media/SDE/Certification/CS-Certification-Info.pdf" },
-      DE: { name: "Delaware", url: "https://www.doe.k12.de.us/certification" },
-      FL: { name: "Florida", url: "https://www.fldoe.org/teaching/certification/cert-policies.stml" },
-      GA: { name: "Georgia", url: "https://www.gapsc.com/GeorgiaEducators/Certification" },
-      HI: { name: "Hawaii", url: "https://www.hawaiipublicschools.org/TeachingAndLearning/Certificate" },
-      ID: { name: "Idaho", url: "https://www.sde.idaho.gov/certification" },
-      IL: { name: "Illinois", url: "https://www.isbe.net/Pages/Certification.aspx" },
-      IN: { name: "Indiana", url: "https://www.in.gov/doe/professionaled/teachercert" },
-      IA: { name: "Iowa", url: "https://www.educateiowa.gov/pk-12/educator-quality" },
-      KS: { name: "Kansas", url: "https://www.ksde.org/Agency/Division-of-Learning-Services/Certification-and-Licensure" },
-      KY: { name: "Kentucky", url: "https://www.kyepsb.net" },
-      LA: { name: "Louisiana", url: "https://www.louisianabelieves.com/teaching/certification" },
-      ME: { name: "Maine", url: "https://www.maine.gov/doe/cert" },
-      MD: { name: "Maryland", url: "https://marylandpublicschools.org/about/Pages/DSFSS/Certification/index.aspx" },
-      MA: { name: "Massachusetts", url: "https://www.doe.mass.edu/licensure" },
-      MI: { name: "Michigan", url: "https://www.michigan.gov/mde/0,4615,7-140-22709" },
-      MN: { name: "Minnesota", url: "https://mn.gov/pelsb" },
-      MS: { name: "Mississippi", url: "https://www.mdek12.org/OSE/Certification" },
-      MO: { name: "Missouri", url: "https://dese.mo.gov/educator-quality/certification" },
-      MT: { name: "Montana", url: "https://opi.mt.gov/Educators" },
-      NE: { name: "Nebraska", url: "https://www.education.ne.gov/tcert" },
-      NV: { name: "Nevada", url: "https://doe.nv.gov/Educator_Support/Certification/" },
-      NH: { name: "New Hampshire", url: "https://www.education.nh.gov/who-we-are/divisions/educator-success/certification" },
-      NJ: { name: "New Jersey", url: "https://www.nj.gov/education/certification/certsandtitles/4148.shtml" },
-      NM: { name: "New Mexico", url: "https://webnew.ped.state.nm.us/ped/educator-certification/" },
-      NY: { name: "New York", url: "https://www.nysed.gov/computer-science" },
-      NC: { name: "North Carolina", url: "https://www.dpi.nc.gov/educators/educator-effectiveness/licensure" },
-      ND: { name: "North Dakota", url: "https://www.nd.gov/espb" },
-      OH: { name: "Ohio", url: "https://education.ohio.gov/Topics/Teaching/Licensure" },
-      OK: { name: "Oklahoma", url: "https://sde.ok.gov/certification" },
-      OR: { name: "Oregon", url: "https://www.oregon.gov/tspc" },
-      PA: { name: "Pennsylvania", url: "https://www.education.pa.gov/Education/CareerandAdultEd/Certification/LearningSupport/Pages/ComputerScienceCert.aspx" },
-      RI: { name: "Rhode Island", url: "https://www.ride.ri.gov/TeachersAdministrators/EducatorCertification.aspx" },
-      SC: { name: "South Carolina", url: "https://ed.sc.gov/districts-schools/educator-licensure-and-certification" },
-      SD: { name: "South Dakota", url: "https://doe.sd.gov/secretary/teachercert.aspx" },
-      TN: { name: "Tennessee", url: "https://www.tn.gov/education/licensing.html" },
-      TX: { name: "Texas", url: "https://tea.texas.gov/texas-educators/certification" },
-      UT: { name: "Utah", url: "https://schoolboard.utah.gov/educator-license" },
-      VT: { name: "Vermont", url: "https://education.vermont.gov/educators/certification-and-endorsement" },
-      VA: { name: "Virginia", url: "https://www.doe.virginia.gov/teaching/licensure" },
-      WA: { name: "Washington", url: "https://www.k12.wa.us/certification" },
-      WV: { name: "West Virginia", url: "https://wvde.us/certification" },
-      WI: { name: "Wisconsin", url: "https://dpi.wi.gov/tepdl/certificate" },
-      WY: { name: "Wyoming", url: "https://edu.wyoming.gov/educators/licensure/" }
-    };
-
-    const colors = ['#FFD700', '#66B2FF', '#1E90FF', '#228B22'];
+    // Map setup
     const map = L.map('map').setView([37.8, -96], 4);
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    L.usaStates({
-      style: { color: '#333', weight: 1 },
-      onEachFeature: (feature, layer) => {
-        const code = feature.properties.postal;
-        const st = stateLinks[code];
-        if (st && st.url) {
-          layer.setStyle({
-            fillColor: colors[st.name.charCodeAt(0) % colors.length],
-            fillOpacity: 0.7
-          });
-          layer.on('click', () => {
-            const infoBox = document.getElementById('info-box');
-            infoBox.innerHTML = `
-              <h3>${st.name} - CS Teacher Certification Info</h3>
-              <p>To learn about Computer Science teacher certification requirements and procedures in ${st.name}, click the link below:</p>
-              <a class="info-link" href="${st.url}" target="_blank" rel="noopener noreferrer">View Certification Info</a>
-            `;
-          });
-        } else {
-          layer.setStyle({
-            fillColor: '#EEE',
-            fillOpacity: 0.5
-          });
-          layer.on('click', () => {
-            const infoBox = document.getElementById('info-box');
-            infoBox.innerHTML = `
-              <h3>${feature.properties.name}</h3>
-              <p>No CS certification information available for this state.</p>
-            `;
-          });
-        }
-      }
-    }).addTo(map);
+    // State data & links (your existing object)
+    const stateLinks = { /* …same as before… */ };
+
+    // Colour scheme
+    const colors = ['#FFD700','#66B2FF','#1E90FF','#228B22'];
+
+    // Fetch GeoJSON for US states
+    fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json')
+      .then(res => res.json())
+      .then(topology => {
+        const geojson = topojson.feature(topology, topology.objects.states);
+        L.geoJSON(geojson, {
+          style: (f) => {
+            const code = f.properties.postal;
+            return {
+              color: '#333', weight:1,
+              fillColor: stateLinks[code] 
+                ? colors[stateLinks[code].name.charCodeAt(0) % colors.length]
+                : '#EEE',
+              fillOpacity: stateLinks[code] ? 0.7 : 0.5
+            };
+          },
+          onEachFeature: (f, layer) => {
+            const code = f.properties.postal;
+            const st = stateLinks[code];
+            layer.on('click', () => {
+              const box = document.getElementById('info-box');
+              if (st) {
+                box.innerHTML = `
+                  <h3>${st.name} – CS Teacher Certification Info</h3>
+                  <p>Learn about certification requirements and procedures in <strong>${st.name}</strong>:</p>
+                  <a class="info-link" href="${st.url}" target="_blank" rel="noopener">View Certification Info</a>
+                `;
+              } else {
+                box.innerHTML = `
+                  <h3>${f.properties.name}</h3>
+                  <p>No CS teacher certification information available for this state.</p>
+                `;
+              }
+            });
+          }
+        }).addTo(map);
+      })
+      .catch(err => console.error('GeoJSON load failed:', err));
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/topojson@3"></script>
 </body>
 </html>
