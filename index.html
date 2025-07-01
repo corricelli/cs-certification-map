@@ -102,11 +102,9 @@
           });
           layer.on('click', (e) => {
             console.log(`Clicked ${st.name}: opening ${st.url}`);
-            setTimeout(() => {
-              const newWin = window.open(st.url, '_blank', 'noopener');
-              if (newWin) newWin.focus();
-              else alert('Pop-up blocked! Please allow pop-ups for this site.');
-            }, 0);
+            const newWin = window.open(st.url, '_blank', 'noopener');
+            if (newWin) newWin.focus();
+            else alert('Pop-up blocked! Please allow pop-ups for this site.');
           });
         } else {
           layer.setStyle({
